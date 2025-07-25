@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>口腔扫描设备控制系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* 登录页面样式 */
+        .login-page {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            width: 400px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 2em;
+            font-weight: 600;
+            color: #2E86C1;
+            margin-bottom: 10px;
+        }
+
+        .login-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #CED4DA;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #2E86C1;
+            box-shadow: 0 0 0 2px rgba(46,134,193,0.25);
+        }
+
+        .btn-primary {
+            width: 100%;
+            background: #2E86C1;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .btn-primary:hover {
+            background: #1F5F8B;
+        }
+
+        /* 主页面布局 */
+        .main-layout {
+            display: none;
+        }
+
+        .header {
+            background: white;
+            padding: 15px 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-logo {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: #2E86C1;
+        }
+
+        .user-info {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .btn-secondary {
+            background: #6C757D;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+
+        .content {
+            padding: 30px;
+            padding-bottom: 100px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        /* 功能卡片 */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .feature-title {
+            font-size: 20px;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+
+        .feature-desc {
+            color: #6C757D;
+            margin-bottom: 25px;
+        }
+
+        .btn-feature {
+            background: #2E86C1;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        /* 扫描演示区域 */
+        .demo-area {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-top: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .scan-preview {
+            background: #f8f9fa;
+            height: 300px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .scan-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .info-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2E86C1, #27AE60);
+            border-radius: 4px;
+            transition: width 2s ease;
+        }
+
+        .status-bar {
+            background: white;
+            padding: 15px 30px;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #27AE60;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .back-btn {
+            background: #6C757D;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .session-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .session-status {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+
+        .status-completed { background: #27AE60; }
+        .status-partial { background: #F39C12; }
+        .status-pending { background: #E74C3C; }
+
+        .session-info {
+            flex: 1;
+        }
+
+        .btn-small {
+            padding: 4px 8px;
+            font-size: 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+
+        .btn-scan { background: #27AE60; color: white; }
+        .btn-view { background: #2E86C1; color: white; }
+    </style>
+</head>
+<body>
+    <!-- 登录页面 -->
+    <div class="login-page" id="loginPage">
+        <div class="login-container">
+            <div class="logo">🦷 OralScan Pro</div>
+            <div class="login-title">口腔扫描设备控制系统</div>
+            
+            <div class="form-group">
+                <label>用户名</label>
+                <input type="text" id="username" placeholder="请输入用户名" value="doctor">
+            </div>
+            
+            <div class="form-group">
+                <label>密码</label>
+                <input type="password" id="password" placeholder="请输入密码" value="123456">
+            </div>
+            
+            <button class="btn-primary" onclick="login()">登录系统</button>
+            
+            <div style="margin-top: 20px; font-size: 12px; color: #666;">
+                演示账号：doctor / 123456
+            </div>
+        </div>
+    </div>
+
+    <!-- 主系统界面 -->
+    <div class="main-layout" id="mainLayout">
+        <!-- 顶部导航 -->
+        <div class="header">
+            <div class="header-logo">🦷 OralScan Pro</div>
+            <div>
+                <span class="user-info">Dr. 张医生</span>
+                <button class="btn-secondary" onclick="logout()">退出</button>
+            </div>
+        </div>
+
+        <!-- 主页 -->
+        <div class="page active" id="homePage">
+            <div class="content">
+                <div class="page-title">口腔扫描控制系统</div>
+                
+                <div class="feature-grid">
+                    <div class="feature-card" onclick="showPage('patientPage')">
+                        <div class="feature-icon">👥</div>
+                        <div class="feature-title">患者管理</div>
+                        <div class="feature-desc">查看和管理患者档案</div>
+                        <button class="btn-feature">进入管理</button>
+                    </div>
+                    
+                    <div class="feature-card" onclick="showPage('scanPage')">
+                        <div class="feature-icon">📷</div>
+                        <div class="feature-title">开始扫描</div>
+                        <div class="feature-desc">启动11摄像头扫描流程</div>
+                        <button class="btn-feature">开始扫描</button>
+                    </div>
+                    
+                    <div class="feature-card" onclick="showPage('modelPage')">
+                        <div class="feature-icon">🦷</div>
+                        <div class="feature-title">3D模型</div>
+                        <div class="feature-desc">查看3D口腔模型</div>
+                        <button class="btn-feature">查看模型</button>
+                    </div>
+                    
+                    <div class="feature-card" onclick="showPage('historyPage')">
+                        <div class="feature-icon">📊</div>
+                        <div class="feature-title">历史记录</div>
+                        <div class="feature-desc">查看扫描历史数据</div>
+                        <button class="btn-feature">查看记录</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 患者管理页面 -->
+        <div class="page" id="patientPage">
+            <div class="content">
+                <button class="back-btn" onclick="showPage('homePage')">← 返回主页</button>
+                <div class="page-title">患者管理</div>
+                
+                <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                    <h3 style="margin-bottom: 20px;">患者列表</h3>
+                    
+                    <div class="session-item">
+                        <div style="font-weight: 500;">P001234 - 张三 (男, 28岁)</div>
+                        <div style="margin-left: auto;">
+                            <button class="btn-small btn-view">查看</button>
+                            <button class="btn-small btn-scan" onclick="showPage('sessionPage')">扫描</button>
+                        </div>
+                    </div>
+                    
+                    <div class="session-item">
+                        <div style="font-weight: 500;">P001235 - 李四 (女, 35岁)</div>
+                        <div style="margin-left: auto;">
+                            <button class="btn-small btn-view">查看</button>
+                            <button class="btn-small btn-scan">扫描</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 会话选择页面 -->
+        <div class="page" id="sessionPage">
+            <div class="content">
+                <button class="back-btn" onclick="showPage('patientPage')">← 返回患者管理</button>
+                <div class="page-title">扫描会话选择 - 张三</div>
+                
+                <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                    <h3 style="margin-bottom: 20px;">请选择扫描视角:</h3>
+                    
+                    <div class="session-item">
+                        <div class="session-status status-completed"></div>
+                        <div class="session-info">
+                            <div style="font-weight: 500;">视角1: 闭嘴3D面部重建 (13个角度)</div>
+                            <div style="font-size: 12px; color: #666;">已完成 13/13</div>
+                        </div>
+                        <button class="btn-small btn-view">查看</button>
+                    </div>
+                    
+                    <div class="session-item">
+                        <div class="session-status status-partial"></div>
+                        <div class="session-info">
+                            <div style="font-weight: 500;">视角4: 下颌咬合面 (7个角度)</div>
+                            <div style="font-size: 12px; color: #666;">进行中 5/7</div>
+                        </div>
+                        <button class="btn-small btn-scan" onclick="showPage('scanPage')">继续扫描</button>
+                    </div>
+                    
+                    <div class="session-item">
+                        <div class="session-status status-pending"></div>
+                        <div class="session-info">
+                            <div style="font-weight: 500;">视角5: 左侧咬合关系 (9个角度)</div>
+                            <div style="font-size: 12px; color: #666;">未开始 0/9</div>
+                        </div>
+                        <button class="btn-small btn-scan">开始</button>
+                    </div>
+                    
+                    <div style="margin-top: 20px;">
+                        <div style="font-weight: 500; margin-bottom: 10px;">整体进度: 3/6 会话完成</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 50%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 扫描页面 -->
+        <div class="page" id="scanPage">
+            <div class="content">
+                <button class="back-btn" onclick="showPage('sessionPage')">← 返回会话选择</button>
+                <div class="page-title">实时扫描 - 视角4: 下颌咬合面</div>
+                
+                <div class="demo-area">
+                    <div class="scan-preview">
+                        <div style="text-align: center; color: #666;">
+                            <div style="font-size: 48px; margin-bottom: 15px;">📷</div>
+                            <div style="font-size: 18px; margin-bottom: 10px;">11摄像头实时扫描中...</div>
+                            <div style="font-size: 14px;">角度 5/7 - 右后方45°</div>
+                            <div style="position: absolute; top: 20px; right: 20px; background: #27AE60; color: white; padding: 5px 10px; border-radius: 15px; font-size: 12px;">
+                                质量: 94分
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="scan-info">
+                        <div class="info-card">
+                            <div style="font-weight: 500; margin-bottom: 5px;">拍摄进度</div>
+                            <div>角度: 5/7</div>
+                            <div>剩余: 8秒</div>
+                        </div>
+                        
+                        <div class="info-card">
+                            <div style="font-weight: 500; margin-bottom: 5px;">设备状态</div>
+                            <div style="color: #27AE60;">✅ 对焦已锁定</div>
+                            <div style="color: #27AE60;">✅ 光线良好</div>
+                        </div>
+                        
+                        <div class="info-card">
+                            <div style="font-weight: 500; margin-bottom: 5px;">图像质量</div>
+                            <div>清晰度: 85%</div>
+                            <div>曝光度: 100%</div>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 20px;">
+                        <button class="btn-feature" onclick="startScanDemo()">立即拍摄</button>
+                        <button class="btn-secondary" style="margin-left: 10px;" onclick="showPage('modelPage')">完成扫描</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3D模型页面 -->
+        <div class="page" id="modelPage">
+            <div class="content">
+                <button class="back-btn" onclick="showPage('homePage')">← 返回主页</button>
+                <div class="page-title">3D口腔模型 - 张三</div>
+                
+                <div class="demo-area">
+                    <div style="height: 400px; background: #f0f0f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+                        <div style="text-align: center; color: #666;">
+                            <div style="font-size: 64px; margin-bottom: 15px;">🦷</div>
+                            <div style="font-size: 18px; margin-bottom: 10px;">3D口腔模型展示区</div>
+                            <div style="font-size: 14px;">支持360°旋转查看</div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                        <button class="btn-secondary">🔄 旋转</button>
+                        <button class="btn-secondary">🔍 缩放</button>
+                        <button class="btn-secondary">📏 测量</button>
+                        <button class="btn-secondary">📷 截图</button>
+                        <button class="btn-feature" style="margin-left: auto;">导出STL</button>
+                    </div>
+                    
+                    <div style="padding: 15px; background: #f8f9fa; border-radius: 8px; font-size: 14px; color: #666;">
+                        模型信息: 精度0.05mm | 重建时间: 1分35秒 | 质量评分: 94分
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 历史记录页面 -->
+        <div class="page" id="historyPage">
+            <div class="content">
+                <button class="back-btn" onclick="showPage('homePage')">← 返回主页</button>
+                <div class="page-title">扫描历史</div>
+                
+                <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                    <h3 style="margin-bottom: 20px;">📅 2025-07-25 今天</h3>
+                    
+                    <div class="session-item">
+                        <div class="session-info">
+                            <div style="font-weight: 500;">10:30 全口扫描 (6个视角) ⭐ 质量:94分</div>
+                            <div style="font-size: 12px; color: #666;">患者: 张三 | 数据大小: 12.5MB</div>
+                        </div>
+                        <button class="btn-small btn-view" onclick="showPage('modelPage')">查看3D</button>
+                    </div>
+                    
+                    <h3 style="margin: 30px 0 20px 0;">📅 2025-07-15 10天前</h3>
+                    
+                    <div class="session-item">
+                        <div class="session-info">
+                            <div style="font-weight: 500;">14:20 上颌扫描 (3个视角) ⭐ 质量:91分</div>
+                            <div style="font-size: 12px; color: #666;">患者: 张三 | 数据大小: 8.2MB</div>
+                        </div>
+                        <button class="btn-small btn-view">查看3D</button>
+                    </div>
+                    
+                    <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; font-size: 14px; color: #666;">
+                        📊 统计: 总扫描3次 | 平均质量91分 | 数据占用35.2MB
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部状态栏 -->
+        <div class="status-bar">
+            <div class="status-item">
+                <div class="status-dot"></div>
+                <span>设备状态: 已连接</span>
+            </div>
+            <div class="status-item">
+                <div class="status-dot"></div>
+                <span>网络: 正常</span>
+            </div>
+            <div class="status-item">
+                <span>存储: 75% 可用</span>
+            </div>
+            <div class="status-item">
+                <span>OralScan Pro v2.1.3</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (username && password) {
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('mainLayout').style.display = 'block';
+            }
+        }
+
+        function logout() {
+            document.getElementById('mainLayout').style.display = 'none';
+            document.getElementById('loginPage').style.display = 'flex';
+        }
+
+        function showPage(pageId) {
+            // 隐藏所有页面
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // 显示目标页面
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        function startScanDemo() {
+            alert('📷 正在拍摄当前角度...\n\n✅ 拍摄完成！\n📊 图像质量: 96分');
+        }
+
+        // 页面加载完成后自动填充登录信息
+        window.onload = function() {
+            document.getElementById('username').value = 'doctor';
+            document.getElementById('password').value = '123456';
+        }
+    </script>
+</body>
+</html>
